@@ -11,25 +11,19 @@ function App() {
       .then((res) => res.json())
       .then((data) => {
         setResults(data);
+      })
+      .catch((erro) => {
+        setResults(null);
       });
   }, []);
-  
+
   return (
     <div className="App">
       <div className="search-bar-container">
         <div className="search-filter">
-          <SearchBar
-            setResults={setResults}
-          />
-          
+          <SearchBar setResults={setResults} />
         </div>
-        {results != null ? (
-          <DataTable
-            data={results}
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
+        {results != null ? <DataTable data={results} /> : <div>Loading...</div>}
       </div>
     </div>
   );

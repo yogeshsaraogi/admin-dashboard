@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "./DataTable.css";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
+import Rowdata from "./Rowdata";
+
 const DataTable = ({ data }) => {
   const itemsPerPage = 10;
   const [tableData, setTableData] = useState(data);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayData, setDisplayData] = useState([]);
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [editedRowIndex, setEditedRowIndex] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [editableRows, setEditableRows] = useState([]);
   const totalPages = Math.ceil(tableData.length / itemsPerPage);
 
   useMemo(() => {
@@ -31,6 +32,15 @@ const DataTable = ({ data }) => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     setSelectedRows([]);
+    setEditableRows([]);
+  };
+
+  const handleFirstPage = () => {
+    handlePageChange(1);
+  };
+
+  const handleLastPage = () => {
+    handlePageChange(totalPages);
   };
 
   const deleteData = (index) => {
@@ -44,23 +54,7 @@ const DataTable = ({ data }) => {
     );
     setTableData(newData);
     setSelectedRows([]);
-  };
-  const openEditModal = (index) => {
-    setEditModalOpen(true);
-    setEditedRowIndex(index);
-  };
-
-  const closeEditModal = () => {
-    setEditModalOpen(false);
-    setEditedRowIndex(null);
-  };
-
-  const saveEditedData = (editedData) => {
-    const newData = [...tableData];
-    const editedIndex = (currentPage - 1) * itemsPerPage + editedRowIndex;
-    newData[editedIndex] = editedData;
-    setTableData(newData);
-    closeEditModal();
+    setEditableRows([]);
   };
 
   const toggleRowSelection = (index) => {
@@ -69,6 +63,7 @@ const DataTable = ({ data }) => {
     } else {
       setSelectedRows((prev) => [...prev, index]);
     }
+    setEditableRows([]);
   };
 
   const handleSelectAllChange = () => {
@@ -81,13 +76,35 @@ const DataTable = ({ data }) => {
     setSelectAllChecked(!selectAllChecked);
   };
 
+  const toggleEditMode = (index) => {
+    if (editableRows.includes(index)) {
+      setEditableRows((prev) =>
+        prev.filter((editableIndex) => editableIndex !== index)
+      );
+    } else {
+      setEditableRows((prev) => [...prev, index]);
+    }
+  };
+
+  const isRowEditable = (index) => editableRows.includes(index);
+  const saveEditedData = (editedData, editedIndex) => {
+    console.log("editable");
+    const newData = [...tableData];
+    const dataIndex = (currentPage - 1) * itemsPerPage + editedIndex;
+    newData[dataIndex] = editedData;
+    setTableData(newData);
+    setEditableRows((prev) =>
+      prev.filter((editableIndex) => editableIndex !== editedIndex)
+    );
+  };
   return (
     <div className="data-table-container">
       <div
         style={{ display: "flex", justifyContent: "end", marginBottom: "4px" }}
       >
-        <FaTrash
+        <MdDeleteForever
           className="delete icon"
+          fontSize={"24"}
           style={{ color: "red" }}
           onClick={() => deleteAll()}
         />
@@ -111,45 +128,30 @@ const DataTable = ({ data }) => {
         </thead>
         <tbody>
           {displayData.map((row, index) => (
-            <tr
-              key={index}
-              style={{
-                backgroundColor: selectedRows.includes(index)
-                  ? "#f2f2f2"
-                  : "inherit",
-              }}
-            >
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedRows.includes(index)}
-                  onChange={() => toggleRowSelection(index)}
-                />
-              </td>
-              <td>{row?.id}</td>
-              <td>{row?.name}</td>
-              <td>{row?.email}</td>
-              <td>{row?.role}</td>
-              <td>
-                <FaTrash
-                  className="delete icon"
-                  style={{ color: "red" }}
-                  onClick={() => deleteData(index)}
-                />
-                <FaEdit
-                  className="edit icon"
-                  style={{ color: "blue", marginLeft: "6px" }}
-                  onClick={() => openEditModal(index)}
-                />
-              </td>
-            </tr>
+            <Rowdata
+              row={row}
+              index={index}
+              selectedRows={selectedRows}
+              toggleRowSelection={toggleRowSelection}
+              isRowEditable={isRowEditable}
+              saveEditedData={saveEditedData}
+              toggleEditMode={toggleEditMode}
+              deleteData={deleteData}
+            />
           ))}
         </tbody>
       </table>
 
       <div className="pagination-container">
         <button
-          className="pagination-button"
+          className="first-page pagination-button"
+          onClick={handleFirstPage}
+          disabled={currentPage === 1}
+        >
+          First
+        </button>
+        <button
+          className="previous-page pagination-button"
           onClick={() =>
             handlePageChange(currentPage > 1 ? currentPage - 1 : 1)
           }
@@ -161,7 +163,7 @@ const DataTable = ({ data }) => {
           Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
         </span>
         <button
-          className="pagination-button"
+          className="next-page pagination-button"
           onClick={() =>
             handlePageChange(
               currentPage < totalPages ? currentPage + 1 : totalPages
@@ -171,14 +173,14 @@ const DataTable = ({ data }) => {
         >
           Next
         </button>
+        <button
+          className="last-page pagination-button"
+          onClick={handleLastPage}
+          disabled={currentPage === totalPages}
+        >
+          Last
+        </button>
       </div>
-      {/* {isEditModalOpen && editedRowIndex!=null && (
-        <EditModal
-          rowData={tableData[(currentPage - 1) * itemsPerPage + editedRowIndex]}
-          onSave={saveEditedData}
-          onClose={closeEditModal}
-        />
-      )} */}
     </div>
   );
 };
