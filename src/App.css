@@ -1,0 +1,28 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  background-color: #eee;
+}
+
+.App {
+  height: 100%;
+  width: 100%;
+}
+
+.search-bar-container {
+  padding-top: 10vh;
+  padding-bottom: 20vh;
+  width: 60%;
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.search-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
