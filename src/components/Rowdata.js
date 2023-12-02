@@ -19,21 +19,30 @@ const Rowdata = ({
 
   return (
     <>
-      <tr
-        key={index}
-        style={{
-          backgroundColor: selectedRows.includes(index) ? "#f2f2f2" : "inherit",
-        }}
-      >
-        <td>
+      <tr key={index}>
+        <td 
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
           <input
             type="checkbox"
             checked={selectedRows.includes(index)}
             onChange={() => toggleRowSelection(index)}
           />
         </td>
-        <td>{row?.id}</td>
-        <td>
+        <td
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
+          {row?.id}
+        </td>
+        <td
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
           {isRowEditable(index) ? (
             <input
               type="text"
@@ -44,7 +53,11 @@ const Rowdata = ({
             row?.name
           )}
         </td>
-        <td>
+        <td
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
           {isRowEditable(index) ? (
             <input
               type="text"
@@ -55,7 +68,11 @@ const Rowdata = ({
             row?.email
           )}
         </td>
-        <td>
+        <td
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
           {isRowEditable(index) ? (
             <input
               type="text"
@@ -66,7 +83,11 @@ const Rowdata = ({
             row?.role
           )}
         </td>
-        <td>
+        <td
+          style={{
+            backgroundColor: selectedRows.includes(index) ? "#fff" : "inherit",
+          }}
+        >
           {isRowEditable(index) ? (
             <>
               <FaSave
